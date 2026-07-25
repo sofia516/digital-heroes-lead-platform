@@ -3,36 +3,59 @@ from app.models.user import User
 from app.core.security import hash_password
 
 
-def create_admin():
+def create_demo_users():
     db = SessionLocal()
 
     try:
-        email = "admin@leadflow.com"
+        users = [
+            {
+                "name": "LeadFlow Admin",
+                "email": "admin@leadflow.com",
+                "password": "Admin@123",
+                "role": "admin",
+            },
+            {
+                "name": "Demo Sales Member",
+                "email": "member@leadflow.com",
+                "password": "Member@123",
+                "role": "member",
+            },
+        ]
 
-        existing = db.query(User).filter(
-            User.email == email
-        ).first()
+        for data in users:
+            existing_user = (
+                db.query(User)
+                .filter(User.email == data["email"])
+                .first()
+            )
 
-        if existing:
-            print("Admin already exists.")
-            return
+            if existing_user:
+                print(f"{data['email']} already exists")
+                continue
 
-        admin = User(
-            name="LeadFlow Admin",
-            email=email,
-            hashed_password=hash_password("Admin@123"),
-            role="admin",
-            is_active=True
-        )
+            user = User(
+                name=data["name"],
+                email=data["email"],
+                hashed_password=hash_password(data["password"]),
+                role=data["role"],
+                is_active=True,
+            )
 
-        db.add(admin)
+            db.add(user)
+            print(f"Created {data['role']}: {data['email']}")
+
         db.commit()
 
-        print("Admin created successfully.")
+        print("Demo users ready.")
+
+    except Exception as exc:
+        db.rollback()
+        print(f"Error: {exc}")
+        raise
 
     finally:
         db.close()
 
 
 if __name__ == "__main__":
-    create_admin()
+    create_demo_users()

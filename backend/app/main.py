@@ -8,7 +8,6 @@ from app import models
 from app.api.auth import router as auth_router
 from app.api.leads import router as leads_router
 from app.api.users import router as users_router
-from app.api.seed import router as seed_router
 
 # ==========================================================
 # DATABASE
@@ -64,7 +63,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(leads_router)
 app.include_router(users_router)
-app.include_router(seed_router)
+
 
 
 # ==========================================================
